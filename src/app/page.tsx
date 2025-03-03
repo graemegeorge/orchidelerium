@@ -1,21 +1,38 @@
-import { Results } from "./components/results";
+import { Results } from "@/components/results";
 import React from "react";
-import { Search } from "./components/search";
-import { SearchingMessage } from "./components/results-client";
+import * as Search from "@/components/search";
+import * as Filters from "@/components/filters";
+import {
+  SearchingMessage,
+  SearchParamMessage,
+} from "@/components/results-client";
 
 interface HomeProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const { q } = await searchParams;
+  const { q, per_page } = await searchParams;
   return (
     <div>
-      <main className="">
+      <main className="h-100vh">
         <form>
           <div className="sticky top-0 p-4 z-50 bg-white/20">
-            <Search />
+            <div className="flex flex-col gap-4">
+              <Search.Root>
+                <Search.Input />
+                <Search.Button className="sr-only" />
+              </Search.Root>
+
+              <Filters.Root>
+                <Filters.ResultCount />
+              </Filters.Root>
+            </div>
           </div>
+
+          {/* <div className="p-4">
+            <Map />
+          </div> */}
 
           <div className="p-4">
             <SearchingMessage />
@@ -23,7 +40,10 @@ export default async function Home({ searchParams }: HomeProps) {
             <React.Suspense
               fallback={<SearchingMessage defaultQuery={(q as string) || ""} />}
             >
-              <Results query={(q as string) || ""} />
+              <Results
+                query={(q as string) || ""}
+                per_page={String(per_page)}
+              />
             </React.Suspense>
           </div>
         </form>
