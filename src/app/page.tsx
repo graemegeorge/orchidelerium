@@ -2,10 +2,7 @@ import { Results } from "@/components/results";
 import React from "react";
 import * as Search from "@/components/search";
 import * as Filters from "@/components/filters";
-import {
-  SearchingMessage,
-  SearchParamMessage,
-} from "@/components/results-client";
+import { SearchingMessage } from "@/components/results-client";
 
 interface HomeProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

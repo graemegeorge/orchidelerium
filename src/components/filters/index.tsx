@@ -32,6 +32,7 @@ const ResultCount = ({ className = "", defaultCount = "25", ...props }) => {
     if (!searchParams.get("per_page")) {
       handleSetQueryParams();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- onMount
   }, []);
 
   return (
