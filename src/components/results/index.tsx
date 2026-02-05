@@ -1,7 +1,7 @@
 import Image from "next/image";
-import { Result } from "@/components/results/types";
-// import { ButtonLink } from "@/components/button";
-import { getImageBySize } from "@/lib/utils";
+import { QueryProps, Result } from "@/components/results/types";
+import { getImageBySize, objectToSearchParams } from "@/lib/utils";
+import Link from "next/link";
 
 interface Response {
   total_results: number;
@@ -11,36 +11,32 @@ interface Response {
 }
 
 const fetchQuery = async ({
-  q,
-  per_page = "25",
-}: {
-  q: string;
-  per_page?: string;
-}): Promise<Response> => {
-  const response = await fetch(
-    `https://api.inaturalist.org/v1/observations?q=${q}&page=1&per_page=${per_page}&has[]=photos`,
-    {
-      cache: "force-cache",
-    }
-  );
+  query,
+  ...props
+}: QueryProps): Promise<Response> => {
+  const params = objectToSearchParams({ q: query, ...props });
+  const uri = `https://api.inaturalist.org/v1/observations?${params}`;
+
+  console.log(uri);
+  const response = await fetch(uri, {
+    cache: "force-cache",
+  });
   return response.json();
 };
 
-export const Results = async ({
-  query,
-  per_page,
-}: {
-  query: string;
-  per_page: string;
-}) => {
-  if (!query) return null;
-  const response = await fetchQuery({ q: query, per_page });
-  // return <StandardLayout response={response} />;
-  return <GridLayout response={response} />;
+export const Results = async (props: QueryProps) => {
+  const response = await fetchQuery(props);
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="">Total: {response.total_results}</div>
+      <GridLayout response={response} />
+    </div>
+  );
 };
 
 const GridLayout = ({ response }: { response: Response }) => {
   const photos = response.results.flatMap((result) => result.photos);
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {photos.map((photo) => {
@@ -49,12 +45,24 @@ const GridLayout = ({ response }: { response: Response }) => {
           id: photo.id,
         });
 
+        const observation = response.results.find((result) =>
+          result.photos.find(({ id }) => id === photo.id)
+        );
+
         return (
           <div
             key={photo.id}
-            className="w-full h-auto aspect-square relative overflow-hidden"
+            className="w-full h-auto aspect-square relative overflow-hidden group"
           >
+            <Link
+              className="absolute left-0 right-0 bottom-0 p-4 bg-black/50 z-40 group-hover:opacity-100 opacity-0 transition-all flex items-center justify-center hover:bg-blue-600"
+              href={observation?.uri || ""}
+              target="_blank"
+            >
+              View observation
+            </Link>
             <Image
+              className="group-hover:scale-110 transition-transform"
               fill
               src={image}
               alt={photo.id}
