@@ -29,3 +29,19 @@ export const getImageBySize = ({
 
   return [`${root}${id}/${size}.${ext}`, sizeMap[size]];
 };
+
+export const objectToSearchParams = (
+  obj: Record<
+    string,
+    string | number | (string | number)[] | null | undefined | boolean
+  >
+): string =>
+  new URLSearchParams(
+    Object.entries(obj).flatMap(([key, value]) =>
+      Array.isArray(value)
+        ? value.filter(Boolean).map((v) => [key, String(v)])
+        : value
+        ? [[key, String(value)]]
+        : []
+    )
+  ).toString();

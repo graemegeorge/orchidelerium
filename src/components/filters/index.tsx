@@ -1,64 +1,80 @@
 "use client";
 
+import { LAST_50_YEARS, MONTHS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { HTMLAttributes, useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { HTMLAttributes, useState } from "react";
 
 const Root = (props: HTMLAttributes<HTMLDivElement>) => {
-  const searchParams = useSearchParams();
-  return searchParams.get("q") ? <div {...props} /> : null;
+  return <div {...props} />;
 };
 
 const ResultCount = ({ className = "", defaultCount = "25", ...props }) => {
-  const searchParams = useSearchParams();
-  const currPerPage = searchParams.get("per_page");
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  const [sliderValue, setSliderValue] = useState(currPerPage || defaultCount);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setSliderValue(newValue);
-  };
-
-  const handleSetQueryParams = useCallback(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("per_page", sliderValue);
-    replace(`${pathname}?${params.toString()}`);
-  }, [sliderValue, pathname, searchParams, replace]);
-
-  useEffect(() => {
-    if (!searchParams.get("per_page")) {
-      handleSetQueryParams();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- onMount
-  }, []);
+  const currCount = useSearchParams().get("per_page");
+  const [sliderValue, setSliderValue] = useState(currCount || defaultCount);
 
   return (
     <div className={cn("flex gap-4 items-center", className)} {...props}>
-      <div className="flex flex-row items-center gap-2 w-sm max-w-sm">
-        <input
-          id="result-count"
-          type="range"
-          min={0}
-          max={100}
-          step={5}
-          value={sliderValue}
-          onChange={handleChange}
-          className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer "
-        />
-        <span className="text-sm">{sliderValue}</span>
-      </div>
-      <button
-        type="button"
-        className="bg-blue-700 w-fit px-2 py-1 hover:bg-blue-600 transition-colors"
-        onClick={handleSetQueryParams}
-      >
-        update
-      </button>
+      <input
+        id="result-count"
+        type="range"
+        min={0}
+        max={100}
+        name="per_page"
+        step={5}
+        value={sliderValue}
+        onChange={(event) => setSliderValue(event.target.value)}
+        className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer "
+      />
+      <span className="text-sm">{sliderValue}</span>
     </div>
   );
 };
 
-export { Root, ResultCount };
+const Month = ({ className, ...props }: HTMLAttributes<HTMLSelectElement>) => {
+  const [month, setMonth] = useState(useSearchParams().get("month") || "");
+  return (
+    <select
+      name="month"
+      className={cn(
+        "bg-blue-700 w-fit px-2 py-1 hover:bg-blue-600 transition-colors",
+        className
+      )}
+      value={month}
+      onChange={(event) => setMonth(event.target.value)}
+      {...props}
+    >
+      <option value="">Select a month</option>
+      {MONTHS.map((month, index) => (
+        <option value={index + 1} key={month}>
+          {month}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+const Year = ({ className, ...props }: HTMLAttributes<HTMLSelectElement>) => {
+  const [year, setYear] = useState(useSearchParams().get("year") || "");
+  return (
+    <select
+      name="year"
+      className={cn(
+        "bg-blue-700 w-fit px-2 py-1 hover:bg-blue-600 transition-colors",
+        className
+      )}
+      value={year}
+      onChange={(event) => setYear(event.target.value)}
+      {...props}
+    >
+      <option value="">Select a year</option>
+      {LAST_50_YEARS.map((year) => (
+        <option value={year} key={year}>
+          {year}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+export { Root, ResultCount, Month, Year };

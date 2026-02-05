@@ -1,3 +1,9 @@
+export interface QueryProps {
+  query: string;
+  per_page: string;
+  month: string;
+  year: string;
+}
 interface Photo {
   id: string;
   license_code: string;

@@ -5,45 +5,46 @@ import * as Filters from "@/components/filters";
 import { SearchingMessage } from "@/components/results-client";
 
 interface HomeProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: Promise<
+    Record<"query" | "per_page" | "month" | "year", string>
+  >;
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const { q, per_page } = await searchParams;
+  const { query, ...params } = await searchParams;
   return (
     <div>
       <main className="h-100vh">
-        <form>
-          <div className="sticky top-0 p-4 z-50 bg-white/20">
-            <div className="flex flex-col gap-4">
-              <Search.Root>
-                <Search.Input />
-                <Search.Button className="sr-only" />
-              </Search.Root>
+        <div className="sticky top-0 p-4 z-50 bg-white/20">
+          <form className="flex flex-col gap-4">
+            <Search.Root>
+              <Search.Input />
+              <Search.Button />
+            </Search.Root>
 
-              <Filters.Root>
-                <Filters.ResultCount />
-              </Filters.Root>
-            </div>
-          </div>
+            <Filters.Root className="flex gap-4">
+              <Filters.ResultCount />
+              <Filters.Month />
+              <Filters.Year />
+            </Filters.Root>
+          </form>
+        </div>
 
-          {/* <div className="p-4">
+        {/* <div className="p-4">
             <Map />
           </div> */}
 
-          <div className="p-4">
-            <SearchingMessage />
+        <div className="p-4">
+          <SearchingMessage />
 
+          {query ? (
             <React.Suspense
-              fallback={<SearchingMessage defaultQuery={(q as string) || ""} />}
+              fallback={<SearchingMessage defaultQuery={query || ""} />}
             >
-              <Results
-                query={(q as string) || ""}
-                per_page={String(per_page)}
-              />
+              <Results query={query} {...params} />
             </React.Suspense>
-          </div>
-        </form>
+          ) : null}
+        </div>
       </main>
     </div>
   );
