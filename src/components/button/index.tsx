@@ -1,22 +1,11 @@
 "use client";
 
-import { ButtonHTMLAttributes } from "react";
+import { AnchorHTMLAttributes } from "react";
 
-interface ButtonLinkProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   href: string;
-  target?: string;
 }
 
-export const ButtonLink = ({
-  href,
-  target = "_self",
-  ...props
-}: ButtonLinkProps) => {
-  return (
-    <button
-      type="button"
-      onClick={() => window.open(href, target)}
-      {...props}
-    />
-  );
+export const ButtonLink = ({ href, ...props }: ButtonLinkProps) => {
+  return <a href={href} {...props} />;
 };

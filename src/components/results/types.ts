@@ -44,7 +44,13 @@ export interface Result {
   photos: Array<Photo>;
 }
 
-export type PhotoSize = "thumb" | "small" | "medium" | "large" | "original";
+export type PhotoSize =
+  | "thumb"
+  | "small"
+  | "medium"
+  | "large"
+  | "original"
+  | "square";
 
 // export type Result = {
 //   id: number;

@@ -11,9 +11,11 @@ export const SearchingMessage = ({
   defaultQuery,
   ...props
 }: SearchMessageProps) => {
-  const { data } = useFormStatus();
+  const { data, pending } = useFormStatus();
   const query = (data?.get("q") as string) || defaultQuery;
-  return query ? <SearchParamMessage query={query} {...props} /> : null;
+  return pending && query ? (
+    <SearchParamMessage query={query} {...props} />
+  ) : null;
 };
 
 interface SearchParamMessageProps extends HtmlHTMLAttributes<HTMLDivElement> {
@@ -26,12 +28,13 @@ export const SearchParamMessage = ({
   return (
     <div
       className={cn(
-        "fixed inset-0 bg-black/80 z-50 flex items-center justify-center text-xl font-bold text-center sm:text-2xl md:text3xl",
+        "fixed inset-0 bg-black/80 z-50 flex items-center justify-center text-xl font-bold text-center sm:text-2xl md:text-3xl",
         className
       )}
+      role="status"
+      aria-live="polite"
     >
-      🕵️‍♀️ <br />
-      Hunting{query ? ` for ${query}` : ""}...
+      Searching{query ? ` for ${query}` : ""}...
     </div>
   );
 };

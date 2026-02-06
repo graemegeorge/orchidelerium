@@ -24,8 +24,16 @@ export const getImageBySize = ({
     thumb: 100,
     square: 75,
   };
-  const [root, rest] = url.split(id);
-  const [, ext] = rest.split(".");
+  const sizePx = sizeMap[size];
+  if (!url.includes(id)) {
+    return [url, sizePx];
+  }
 
-  return [`${root}${id}/${size}.${ext}`, sizeMap[size]];
+  const [root, rest] = url.split(id);
+  const ext = rest?.split(".")[1];
+  if (!ext) {
+    return [url, sizePx];
+  }
+
+  return [`${root}${id}/${size}.${ext}`, sizePx];
 };
