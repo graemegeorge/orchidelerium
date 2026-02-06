@@ -24,7 +24,8 @@ const ResultCount = ({ className = "", defaultCount = "25", ...props }) => {
 
   const handleSetQueryParams = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("per_page", sliderValue);
+    const nextValue = Math.max(1, Math.min(100, Number(sliderValue) || 25));
+    params.set("per_page", String(nextValue));
     replace(`${pathname}?${params.toString()}`);
   }, [sliderValue, pathname, searchParams, replace]);
 
@@ -35,13 +36,20 @@ const ResultCount = ({ className = "", defaultCount = "25", ...props }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- onMount
   }, []);
 
+  useEffect(() => {
+    const next = searchParams.get("per_page");
+    if (next && next !== sliderValue) {
+      setSliderValue(next);
+    }
+  }, [searchParams, sliderValue]);
+
   return (
     <div className={cn("flex gap-4 items-center", className)} {...props}>
       <div className="flex flex-row items-center gap-2 w-sm max-w-sm">
         <input
           id="result-count"
           type="range"
-          min={0}
+          min={1}
           max={100}
           step={5}
           value={sliderValue}

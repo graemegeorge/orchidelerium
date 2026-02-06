@@ -17,12 +17,18 @@ const fetchQuery = async ({
   q: string;
   per_page?: string;
 }): Promise<Response> => {
-  const response = await fetch(
-    `https://api.inaturalist.org/v1/observations?q=${q}&page=1&per_page=${per_page}&has[]=photos`,
-    {
-      cache: "force-cache",
-    }
-  );
+  const url = new URL("https://api.inaturalist.org/v1/observations");
+  url.searchParams.set("q", q);
+  url.searchParams.set("page", "1");
+  url.searchParams.set("per_page", per_page);
+  url.searchParams.append("has[]", "photos");
+
+  const response = await fetch(url.toString(), {
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch results (${response.status})`);
+  }
   return response.json();
 };
 
