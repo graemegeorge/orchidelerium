@@ -5,11 +5,11 @@ import * as Filters from "@/components/filters";
 import { SearchParamMessage, SearchingMessage } from "@/components/results-client";
 
 interface HomeProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function Home({ searchParams }: HomeProps) {
-  const { q, per_page } = searchParams;
+  const { q, per_page } = await searchParams;
   const query = Array.isArray(q) ? q[0] : q;
   const perPage = Array.isArray(per_page) ? per_page[0] : per_page;
   return (
