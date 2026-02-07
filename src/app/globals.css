@@ -3,19 +3,105 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0c0f14;
+  --bg-elev: #121622;
+  --card: #141a27;
+  --fg: #f2f5f7;
+  --muted: #9da8b3;
+  --accent: #86d7a1;
+  --accent-2: #f3c67a;
+  --accent-3: #7fb6ff;
+  --border: #232a38;
+  --glow: 0 0 40px rgba(134, 215, 161, 0.12);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme="light"] {
+  --bg: #f6f3ef;
+  --bg-elev: #ffffff;
+  --card: #ffffff;
+  --fg: #12151a;
+  --muted: #54606f;
+  --accent: #2a8f5f;
+  --accent-2: #b5812a;
+  --accent-3: #346fd1;
+  --border: #e1d9cf;
+  --glow: 0 0 40px rgba(42, 143, 95, 0.14);
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--fg);
+  background: radial-gradient(
+      1200px 600px at 10% -10%,
+      rgba(134, 215, 161, 0.2),
+      transparent 60%
+    ),
+    radial-gradient(
+      800px 400px at 90% -20%,
+      rgba(243, 198, 122, 0.18),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 400px at 70% 10%,
+      rgba(127, 182, 255, 0.12),
+      transparent 60%
+    ),
+    var(--bg);
+  font-family: var(--font-body), sans-serif;
+  min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.02),
+      transparent 45%
+    ),
+    radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 100% 100%, 120px 120px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.font-display {
+  font-family: var(--font-display), serif;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+.font-script {
+  font-family: var(--font-script), cursive;
+  letter-spacing: 0.01em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+input,
+textarea {
+  background-color: var(--bg-elev);
+  color: var(--fg);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill {
+  -webkit-text-fill-color: var(--fg);
+  box-shadow: 0 0 0px 1000px var(--bg-elev) inset;
+  transition: background-color 5000s ease-in-out 0s;
 }

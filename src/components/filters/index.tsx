@@ -44,8 +44,14 @@ const ResultCount = ({ className = "", defaultCount = "25", ...props }) => {
   }, [searchParams, sliderValue]);
 
   return (
-    <div className={cn("flex gap-4 items-center", className)} {...props}>
-      <div className="flex flex-row items-center gap-2 w-sm max-w-sm">
+    <div
+      className={cn(
+        "flex flex-wrap gap-4 items-center text-sm text-[var(--muted)]",
+        className
+      )}
+      {...props}
+    >
+      <div className="flex flex-row items-center gap-3 w-sm max-w-sm">
         <input
           id="result-count"
           type="range"
@@ -54,13 +60,13 @@ const ResultCount = ({ className = "", defaultCount = "25", ...props }) => {
           step={5}
           value={sliderValue}
           onChange={handleChange}
-          className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer "
+          className="w-full h-2 bg-[var(--border)] rounded-lg appearance-none cursor-pointer accent-[var(--accent)]"
         />
-        <span className="text-sm">{sliderValue}</span>
+        <span className="text-sm text-[var(--fg)]">{sliderValue}</span>
       </div>
       <button
         type="button"
-        className="bg-blue-700 w-fit px-2 py-1 hover:bg-blue-600 transition-colors"
+        className="px-3 py-1 rounded-lg border border-[var(--border)] text-[var(--fg)] hover:bg-[var(--bg-elev)] transition-colors"
         onClick={handleSetQueryParams}
       >
         update

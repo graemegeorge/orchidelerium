@@ -28,7 +28,8 @@ export const SearchParamMessage = ({
   return (
     <div
       className={cn(
-        "fixed inset-0 bg-black/80 z-50 flex items-center justify-center text-xl font-bold text-center sm:text-2xl md:text-3xl",
+        "fixed inset-0 bg-black/80 z-50 flex items-center justify-center text-xl font-semibold text-center sm:text-2xl md:text-3xl",
+        "backdrop-blur-sm text-[var(--fg)]",
         className
       )}
       role="status"
