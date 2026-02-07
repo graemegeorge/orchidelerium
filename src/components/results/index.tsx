@@ -48,7 +48,7 @@ export const Results = async ({
 const GridLayout = ({ response }: { response: Response }) => {
   const photos = response.results.flatMap((result) => result.photos);
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
       {photos.map((photo) => {
         const [image] = getImageBySize({
           url: photo.url,
@@ -58,13 +58,14 @@ const GridLayout = ({ response }: { response: Response }) => {
         return (
           <div
             key={photo.id}
-            className="w-full h-auto aspect-square relative overflow-hidden"
+            className="w-full h-auto aspect-square relative overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--bg-elev)] shadow-[var(--glow)]"
           >
             <Image
               fill
               src={image}
               alt={photo.id}
               style={{ objectFit: "cover" }}
+              className="transition-transform duration-300 hover:scale-105"
             />
           </div>
         );

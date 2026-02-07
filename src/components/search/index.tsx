@@ -38,10 +38,10 @@ const Root = ({
   );
 };
 
-const Input = ({
-  className,
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) => {
+const Input = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>(({ className, ...props }, ref) => {
   const searchParams = useSearchParams();
   const current = searchParams.get("q") || "";
   const [value, setValue] = React.useState(current);
@@ -54,32 +54,41 @@ const Input = ({
     <input
       type="search"
       name="q"
+      ref={ref}
       value={value}
       onChange={(e) => setValue(e.target.value)}
-      placeholder="Search organisms..."
+      placeholder="Search flora and fauna..."
       className={cn(
-        "p-4 text-black rounded-lg w-full bg-white/80 hover:bg-white focus:bg-white text-center transition-colors text-2xl font-bold",
+        "w-full rounded-lg px-6 py-4 text-lg md:text-xl",
+        "bg-[var(--bg-elev)]/90 hover:bg-[var(--bg-elev)] focus:bg-[var(--bg-elev)]",
+        "text-[var(--fg)] placeholder:text-[var(--muted)]",
+        "border border-[var(--border)] shadow-[var(--glow)]",
+        "transition-all focus:ring-2 focus:ring-[var(--accent)]/40 outline-none",
         className
       )}
       {...props}
     />
   );
-};
+});
+
+Input.displayName = "SearchInput";
 
 const Button = ({
   className,
+  children,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <button
       type="submit"
       className={cn(
-        "bg-fuchsia-800 hover:bg-fuchsia-700 text-white px-12 transition-colors",
+        "bg-[var(--accent)] text-black px-8 py-3 rounded-lg",
+        "hover:brightness-110 transition-all",
         className
       )}
       {...props}
     >
-      Submit
+      {children ?? "Search"}
     </button>
   );
 };
