@@ -56,10 +56,31 @@ const checkRateLimit = (ip: string) => {
   };
 };
 
-const normalizeResults = (payload: any) => {
+interface PlantNetImage {
+  url?: string;
+  source?: string;
+}
+
+interface PlantNetResult {
+  species?: {
+    scientificNameWithoutAuthor?: string;
+    scientificName?: string;
+    commonNames?: string[];
+  };
+  score?: number;
+  genus?: { scientificName?: string };
+  family?: { scientificName?: string };
+  images?: PlantNetImage[];
+}
+
+interface PlantNetPayload {
+  results?: PlantNetResult[];
+}
+
+const normalizeResults = (payload: PlantNetPayload) => {
   const rawResults = Array.isArray(payload?.results) ? payload.results : [];
 
-  return rawResults.slice(0, 5).map((result: any) => {
+  return rawResults.slice(0, 5).map((result: PlantNetResult) => {
     const species =
       result?.species?.scientificNameWithoutAuthor ||
       result?.species?.scientificName ||
@@ -68,8 +89,8 @@ const normalizeResults = (payload: any) => {
 
     const images = Array.isArray(result?.images)
       ? result.images
-          .filter((image: any) => typeof image?.url === "string")
-          .map((image: any) => ({
+          .filter((image: PlantNetImage) => typeof image?.url === "string")
+          .map((image: PlantNetImage) => ({
             url: image.url,
             source: image?.source || null,
           }))
@@ -113,7 +134,7 @@ export async function POST(req: NextRequest) {
   let formData: FormData;
   try {
     formData = await req.formData();
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Invalid form data." },
       { status: 400 }
@@ -168,7 +189,7 @@ export async function POST(req: NextRequest) {
       method: "POST",
       body: outbound,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Unable to reach the identification service." },
       { status: 502 }
