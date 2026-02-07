@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Camera, RefreshCcw, UploadCloud, Sparkles } from "lucide-react";
 
@@ -56,7 +57,7 @@ export const IdentifyClient = () => {
         await videoRef.current.play();
       }
       setCameraActive(true);
-    } catch (err) {
+    } catch {
       setCameraError(
         "Camera access was blocked. You can still upload a photo instead."
       );
@@ -266,10 +267,13 @@ export const IdentifyClient = () => {
                   key={`${url}-${index}`}
                   className="relative overflow-hidden rounded-xl border border-[var(--border)]"
                 >
-                  <img
+                  <Image
                     src={url}
                     alt={`Selected plant ${index + 1}`}
                     className="h-28 w-full object-cover"
+                    width={200}
+                    height={112}
+                    unoptimized
                   />
                 </div>
               ))}
@@ -356,10 +360,13 @@ export const IdentifyClient = () => {
                       key={`${image.url}-${imageIndex}`}
                       className="relative overflow-hidden rounded-xl border border-[var(--border)]"
                     >
-                      <img
+                      <Image
                         src={image.url}
                         alt={result.species}
                         className="h-20 w-full object-cover"
+                        width={200}
+                        height={80}
+                        unoptimized
                       />
                     </div>
                   ))}
