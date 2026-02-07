@@ -55,7 +55,15 @@ export default async function Home({ searchParams }: HomeProps) {
               </div>
             ) : null}
 
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <Link
+                href="/identify"
+                className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elev)]/80 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
+              >
+                Identify
+              </Link>
+              <ThemeToggle />
+            </div>
           </div>
         </header>
 
