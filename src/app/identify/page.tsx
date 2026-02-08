@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { IdentifyClient } from "@/components/identify/identify-client";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Sparkles, Camera } from "lucide-react";
+import { Camera } from "lucide-react";
 
 export default function IdentifyPage() {
   return (
