@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { IdentifyClient } from "@/components/identify/identify-client";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Camera } from "lucide-react";
 
 export default function IdentifyPage() {
   return (
@@ -15,7 +15,7 @@ export default function IdentifyPage() {
                   href="/"
                   className="font-display text-2xl md:text-3xl text-[var(--fg)] hover:text-[var(--accent)] transition-colors"
                 >
-                  orchidelerium
+                  Canopy
                 </Link>
                 <div className="text-xs tracking-[0.18em] text-[var(--muted)]">
                   field companion
@@ -25,7 +25,7 @@ export default function IdentifyPage() {
 
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elev)]/80 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[var(--muted)]">
-                <Sparkles size={14} className="text-[var(--accent-2)]" />
+                <Camera size={14} className="text-[var(--accent-2)]" />
                 Identify
               </span>
               <ThemeToggle />

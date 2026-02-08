@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Camera, RefreshCcw, UploadCloud, Sparkles } from "lucide-react";
 
@@ -13,6 +14,7 @@ interface IdentifyResult {
   genus?: string | null;
   family?: string | null;
   images: Array<{ url: string; source?: string | null }>;
+  image?: { url: string; source: "inat" };
 }
 
 interface IdentifyResponse {
@@ -270,7 +272,7 @@ export const IdentifyClient = () => {
               {previewUrls.map((url, index) => (
                 <div
                   key={`${url}-${index}`}
-                  className="relative overflow-hidden rounded-xl border border-[var(--border)]"
+                  className="relative aspect-square overflow-hidden rounded-xl border border-[var(--border)]"
                 >
                   <Image
                     src={url}
@@ -344,13 +346,33 @@ export const IdentifyClient = () => {
           {results?.map((result, index) => (
             <div
               key={`${result.species}-${index}`}
-              className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-4"
+              className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]/80 p-4"
             >
-              <div className="flex items-start justify-between gap-3">
+              {result.image?.url || result.images?.[0]?.url ? (
+                <>
+                  <div className="absolute inset-0">
+                    <Image
+                      src={result.image?.url || result.images[0].url}
+                      alt={result.species}
+                      fill
+                      sizes="(max-width: 1024px) 90vw, 520px"
+                      className="object-cover opacity-50"
+                      unoptimized
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/25" />
+                  <div className="absolute inset-0 bg-[var(--card)]/40" />
+                </>
+              ) : null}
+
+              <div className="relative z-10 flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-lg font-semibold text-[var(--fg)]">
+                  <Link
+                    href={`/?q=${encodeURIComponent(result.species)}`}
+                    className="text-lg font-semibold text-[var(--fg)] hover:text-[var(--accent)] transition-colors"
+                  >
                     {result.species}
-                  </p>
+                  </Link>
                   <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">
                     Confidence {formatScore(result.score)}
                   </p>
@@ -363,26 +385,6 @@ export const IdentifyClient = () => {
                   #{index + 1}
                 </span>
               </div>
-
-              {result.images?.length ? (
-                <div className="mt-3 grid grid-cols-3 gap-2">
-                  {result.images.slice(0, 3).map((image, imageIndex) => (
-                    <div
-                      key={`${image.url}-${imageIndex}`}
-                      className="relative overflow-hidden rounded-xl border border-[var(--border)]"
-                    >
-                      <Image
-                        src={image.url}
-                        alt={result.species}
-                        fill
-                        sizes="(max-width: 1024px) 33vw, 25vw"
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : null}
             </div>
           ))}
         </div>

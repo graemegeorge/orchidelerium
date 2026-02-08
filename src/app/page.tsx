@@ -37,7 +37,7 @@ export default async function Home({ searchParams }: HomeProps) {
                   href="/"
                   className="font-display text-2xl md:text-3xl text-[var(--fg)] hover:text-[var(--accent)] transition-colors"
                 >
-                  orchidelerium
+                  Canopy
                 </Link>
                 <div className="text-xs tracking-[0.18em] text-[var(--muted)]">
                   field companion
@@ -60,6 +60,7 @@ export default async function Home({ searchParams }: HomeProps) {
                 href="/identify"
                 className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-elev)]/80 px-4 py-2 text-xs uppercase tracking-[0.24em] text-[var(--muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] transition-colors"
               >
+                <Camera size={14} className="text-[var(--accent-2)]" />
                 Identify
               </Link>
               <ThemeToggle />
@@ -84,7 +85,7 @@ export default async function Home({ searchParams }: HomeProps) {
                   wild.
                 </h1>
                 <p className="mt-5 text-base md:text-lg text-[var(--muted)]">
-                  orchidelerium uses the iNaturalist API to pull clean, real
+                  Canopy uses the iNaturalist API to pull clean, real
                   observation photos so you can scan examples side-by-side and
                   make confident identifications.
                 </p>

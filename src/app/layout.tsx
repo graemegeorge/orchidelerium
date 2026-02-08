@@ -21,9 +21,9 @@ const script = Parisienne({
 });
 
 export const metadata: Metadata = {
-  title: "orchidelerium",
+  title: "Canopy",
   description:
-    "A fast, minimal companion app for comparing flora and fauna photos using the iNaturalist API.",
+    "A fast, minimal field companion for comparing flora and fauna photos using the iNaturalist API.",
 };
 
 export default function RootLayout({

@@ -7,7 +7,7 @@ export const ThemeToggle = ({ className = "" }) => {
   const [theme, setTheme] = React.useState<"dark" | "light">("dark");
 
   React.useEffect(() => {
-    const stored = localStorage.getItem("orchidelerium-theme");
+    const stored = localStorage.getItem("canopy-theme");
     const initial =
       stored === "dark" || stored === "light"
         ? stored
@@ -19,7 +19,7 @@ export const ThemeToggle = ({ className = "" }) => {
 
   React.useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem("orchidelerium-theme", theme);
+    localStorage.setItem("canopy-theme", theme);
   }, [theme]);
 
   return (

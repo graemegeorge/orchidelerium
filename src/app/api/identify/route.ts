@@ -87,12 +87,21 @@ type PlantNetResponse = {
   error?: string;
 };
 
+type IdentifyResult = {
+  species: string;
+  score: number;
+  genus: string | null;
+  family: string | null;
+  images: Array<{ url: string; source?: string | null }>;
+  image?: { url: string; source: "inat" };
+};
+
 const asResponse = (payload: unknown): PlantNetResponse | null => {
   if (!payload || typeof payload !== "object") return null;
   return payload as PlantNetResponse;
 };
 
-const normalizeResults = (payload: unknown) => {
+const normalizeResults = (payload: unknown): IdentifyResult[] => {
   const response = asResponse(payload);
   const rawResults = Array.isArray(response?.results) ? response.results : [];
 
@@ -127,6 +136,27 @@ const normalizeResults = (payload: unknown) => {
       images,
     };
   });
+};
+
+const fetchInatImage = async (species: string) => {
+  const url = new URL("https://api.inaturalist.org/v1/observations");
+  url.searchParams.set("taxon_name", species);
+  url.searchParams.set("per_page", "1");
+  url.searchParams.set("order", "desc");
+  url.searchParams.set("order_by", "created_at");
+  url.searchParams.set("photos", "true");
+  url.searchParams.set("quality_grade", "research,needs_id");
+
+  const response = await fetch(url.toString(), { cache: "no-store" });
+  if (!response.ok) return null;
+  const payload = (await response.json()) as {
+    results?: Array<{
+      photos?: Array<{ url?: string | null }>;
+    }>;
+  };
+  const urlCandidate = payload?.results?.[0]?.photos?.[0]?.url;
+  if (typeof urlCandidate !== "string") return null;
+  return urlCandidate.replace("square", "medium");
 };
 
 export async function POST(req: NextRequest) {
@@ -248,6 +278,17 @@ export async function POST(req: NextRequest) {
   }
 
   const results = normalizeResults(payload);
+  const enriched = await Promise.allSettled(
+    results.map(async (result) => {
+      const image = await fetchInatImage(result.species);
+      return image
+        ? { ...result, image: { url: image, source: "inat" } }
+        : result;
+    })
+  );
+  const finalResults = enriched.map((entry, index) =>
+    entry.status === "fulfilled" ? entry.value : results[index]
+  );
 
-  return NextResponse.json({ results });
+  return NextResponse.json({ results: finalResults });
 }
