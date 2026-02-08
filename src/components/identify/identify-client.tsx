@@ -140,17 +140,22 @@ export const IdentifyClient = () => {
 
       const payload = (await response.json()) as IdentifyResponse & {
         error?: string;
+        details?: string | null;
+        status?: number;
       };
 
       if (!response.ok) {
-        throw new Error(payload.error || "Unable to identify this image.");
+        const detail = payload.details ? ` (${payload.details})` : "";
+        throw new Error(
+          `${payload.error || "Unable to identify this image."}${detail}`
+        );
       }
 
       setResults(payload.results);
-    } catch (err) {
+    } catch (error) {
       setError(
-        err instanceof Error
-          ? err.message
+        error instanceof Error
+          ? error.message
           : "We couldn't identify that image."
       );
     } finally {
@@ -270,9 +275,9 @@ export const IdentifyClient = () => {
                   <Image
                     src={url}
                     alt={`Selected plant ${index + 1}`}
-                    className="h-28 w-full object-cover"
-                    width={200}
-                    height={112}
+                    fill
+                    sizes="(max-width: 640px) 50vw, 33vw"
+                    className="object-cover"
                     unoptimized
                   />
                 </div>
@@ -299,6 +304,12 @@ export const IdentifyClient = () => {
               {error}
             </div>
           ) : null}
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elev)]/60 p-3 text-xs text-[var(--muted)]">
+            If you see authorization errors, check your Pl@ntNet API key settings.
+            When “expose my API key” is enabled, you must add your server’s
+            public IP under “Authorized IPs,” or disable exposure for server
+            requests.
+          </div>
         </div>
       </section>
 
@@ -363,9 +374,9 @@ export const IdentifyClient = () => {
                       <Image
                         src={image.url}
                         alt={result.species}
-                        className="h-20 w-full object-cover"
-                        width={200}
-                        height={80}
+                        fill
+                        sizes="(max-width: 1024px) 33vw, 25vw"
+                        className="object-cover"
                         unoptimized
                       />
                     </div>
