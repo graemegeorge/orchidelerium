@@ -140,10 +140,15 @@ export const IdentifyClient = () => {
 
       const payload = (await response.json()) as IdentifyResponse & {
         error?: string;
+        details?: string | null;
+        status?: number;
       };
 
       if (!response.ok) {
-        throw new Error(payload.error || "Unable to identify this image.");
+        const detail = payload.details ? ` (${payload.details})` : "";
+        throw new Error(
+          `${payload.error || "Unable to identify this image."}${detail}`
+        );
       }
 
       setResults(payload.results);
@@ -299,6 +304,12 @@ export const IdentifyClient = () => {
               {error}
             </div>
           ) : null}
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elev)]/60 p-3 text-xs text-[var(--muted)]">
+            If you see authorization errors, check your Pl@ntNet API key settings.
+            When “expose my API key” is enabled, you must add your server’s
+            public IP under “Authorized IPs,” or disable exposure for server
+            requests.
+          </div>
         </div>
       </section>
 

@@ -56,42 +56,59 @@ const checkRateLimit = (ip: string) => {
   };
 };
 
-interface PlantNetImage {
+type PlantNetImage = {
   url?: string;
   source?: string;
-}
+};
 
-interface PlantNetResult {
-  species?: {
+type PlantNetSpecies = {
+  scientificNameWithoutAuthor?: string;
+  scientificName?: string;
+  commonNames?: string[];
+  genus?: {
     scientificNameWithoutAuthor?: string;
     scientificName?: string;
-    commonNames?: string[];
   };
+  family?: {
+    scientificNameWithoutAuthor?: string;
+    scientificName?: string;
+  };
+};
+
+type PlantNetResult = {
   score?: number;
-  genus?: { scientificName?: string };
-  family?: { scientificName?: string };
+  species?: PlantNetSpecies;
   images?: PlantNetImage[];
-}
+};
 
-interface PlantNetPayload {
+type PlantNetResponse = {
   results?: PlantNetResult[];
-}
+  message?: string;
+  error?: string;
+};
 
-const normalizeResults = (payload: PlantNetPayload) => {
-  const rawResults = Array.isArray(payload?.results) ? payload.results : [];
+const asResponse = (payload: unknown): PlantNetResponse | null => {
+  if (!payload || typeof payload !== "object") return null;
+  return payload as PlantNetResponse;
+};
+
+const normalizeResults = (payload: unknown) => {
+  const response = asResponse(payload);
+  const rawResults = Array.isArray(response?.results) ? response.results : [];
 
   return rawResults.slice(0, 5).map((result: PlantNetResult) => {
+    const speciesBlock = result?.species;
     const species =
-      result?.species?.scientificNameWithoutAuthor ||
-      result?.species?.scientificName ||
-      result?.species?.commonNames?.[0] ||
+      speciesBlock?.scientificNameWithoutAuthor ||
+      speciesBlock?.scientificName ||
+      speciesBlock?.commonNames?.[0] ||
       "Unknown species";
 
     const images = Array.isArray(result?.images)
       ? result.images
-          .filter((image: PlantNetImage) => typeof image?.url === "string")
-          .map((image: PlantNetImage) => ({
-            url: image.url,
+          .filter((image) => typeof image?.url === "string")
+          .map((image) => ({
+            url: image.url as string,
             source: image?.source || null,
           }))
       : [];
@@ -99,8 +116,14 @@ const normalizeResults = (payload: PlantNetPayload) => {
     return {
       species,
       score: typeof result?.score === "number" ? result.score : 0,
-      genus: result?.genus?.scientificName || null,
-      family: result?.family?.scientificName || null,
+      genus:
+        speciesBlock?.genus?.scientificNameWithoutAuthor ||
+        speciesBlock?.genus?.scientificName ||
+        null,
+      family:
+        speciesBlock?.family?.scientificNameWithoutAuthor ||
+        speciesBlock?.family?.scientificName ||
+        null,
       images,
     };
   });
@@ -196,14 +219,34 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const responseText = await response.text();
+  let payload: unknown = null;
+  try {
+    payload = responseText ? JSON.parse(responseText) : null;
+  } catch {
+    payload = null;
+  }
+
   if (!response.ok) {
+    const hint =
+      response.status === 401 || response.status === 403
+        ? "Your API key may be invalid or restricted."
+        : "Identification failed. Try a clearer image.";
+
     return NextResponse.json(
-      { error: "Identification failed. Try a clearer image." },
+      {
+        error: hint,
+        status: response.status,
+        details:
+          asResponse(payload)?.message ||
+          asResponse(payload)?.error ||
+          responseText ||
+          null,
+      },
       { status: 502 }
     );
   }
 
-  const payload = await response.json();
   const results = normalizeResults(payload);
 
   return NextResponse.json({ results });
